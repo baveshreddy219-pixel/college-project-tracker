@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create account - College Project Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+</head>
+<body>
+    <div class="login-container">
+        <aside class="login-brand">
+            <a class="logo" href="/" style="color:#fff"><img src="{{ url_for('static', filename='images/favicon.svg') }}" alt="">College Project Tracker</a>
+            <div><h2>Start tracking your project today.</h2><p>Students create a project and add teammates. Faculty review work and approve milestones.</p></div>
+            <div class="demo">Already registered? <a href="{{ url_for('login_page') }}" style="color:#3ddbc4">Sign in</a></div>
+        </aside>
+        <main class="login-side">
+        <div class="login-form">
+            <h2>Create account</h2><p class="sub">Choose your role, then fill in your details.</p>
+            <div class="role-selection">
+                <button class="role-btn active" data-role="student" type="button">Student</button>
+                <button class="role-btn" data-role="faculty" type="button">Faculty</button>
+            </div>
+            <form id="signupForm">
+                <div class="form-group"><label for="name">Full name</label><input id="name" required autocomplete="name"></div>
+                <div class="form-group"><label for="username" id="userLabel">Registration number</label><input id="username" required autocomplete="username" placeholder="ENG25AD0154" maxlength="25" style="text-transform:uppercase"><small id="userHint" style="color:var(--muted,#64748b)">Format: ENG + year + branch + 4 digits, e.g. ENG25AD0154</small></div>
+                <div class="form-group"><label for="email">Email</label><input type="email" id="email" required autocomplete="email"><small id="emailHint" style="color:var(--muted,#64748b)"></small></div>
+                <div class="form-group"><label for="department">Department</label><select id="department" required></select></div>
+                <div class="form-group" id="codeGroup" style="display:none"><label for="code">Faculty access code</label><input id="code" autocomplete="off" placeholder="Ask your department for this code"></div>
+                <div class="form-group"><label for="password">Password (6+ characters)</label><input type="password" id="password" minlength="6" required autocomplete="new-password"></div>
+                <div class="form-group"><label for="confirm">Confirm password</label><input type="password" id="confirm" required autocomplete="new-password"></div>
+                <p id="msg" role="alert" style="color:var(--rose);margin-bottom:.8rem;min-height:1.2em"></p>
+                <button type="submit" class="btn btn-primary">Create account</button>
+            </form>
+        </div>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/departments.js') }}"></script>
+    <script>
+        let role='student'; const $=id=>document.getElementById(id);
+    function setRole(r){role=r;document.querySelectorAll('.role-btn').forEach(b=>b.classList.toggle('active',b.dataset.role===r));
+      $('department').innerHTML=DEPARTMENTS.map(d=>`<option>${d}</option>`).join('');
+      $('userLabel').textContent=r==='student'?'Registration number':'Username';$('codeGroup').style.display=r==='faculty'?'block':'none';$('code').required=r==='faculty';
+      const st=r==='student';$('username').placeholder=st?'ENG25AD0154':'e.g. DSMITH';$('userHint').style.display=st?'block':'none';
+      $('email').readOnly=st;$('email').value='';$('email').placeholder=st?'Eng25ad0154@dsu.edu.in':'name@dsu.edu.in';
+      $('emailHint').textContent=st?'Generated automatically from your registration number.':'';syncEmail();}
+    const ROLL=/^ENG\d{2}[A-Z]{2}\d{4}$/;
+    function syncEmail(){if(role!=='student')return;const v=$('username').value.replace(/[\s.]/g,'').toUpperCase();
+      $('email').value=ROLL.test(v)?v.charAt(0)+v.slice(1).toLowerCase()+'@dsu.edu.in':'';}
+    $('username').addEventListener('input',()=>{if(role==='student')$('username').value=$('username').value.toUpperCase();syncEmail();});
+    document.querySelectorAll('.role-btn').forEach(b=>b.onclick=()=>setRole(b.dataset.role)); setRole('student');
+    $('signupForm').onsubmit=async e=>{e.preventDefault();$('msg').textContent='';
+      if(role==='student'&&!ROLL.test($('username').value.replace(/[\s.]/g,'').toUpperCase())){$('msg').textContent='Registration number must look like ENG25AD0154.';return;}
+      if($('password').value!==$('confirm').value){$('msg').textContent='Passwords do not match.';return;}
+      const body={role,name:$('name').value,username:$('username').value,email:$('email').value,department:$('department').value,access_code:$('code').value,password:$('password').value};
+      const r=await fetch('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json();
+      if(!j.success){$('msg').textContent=j.message;return;}
+      const l=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:body.username,password:body.password})});
+      location.href=role==='faculty'?'/faculty-dashboard':'/student-dashboard';};
+    </script>
+</body>
+</html>

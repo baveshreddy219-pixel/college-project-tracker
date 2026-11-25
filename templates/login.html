@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - College Project Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+</head>
+<body>
+    <div class="login-container">
+        <aside class="login-brand">
+            <a class="logo" href="/" style="color:#fff"><img src="{{ url_for('static', filename='images/favicon.svg') }}" alt="">College Project Tracker</a>
+            <div><h2>Pick up where your project left off.</h2><p>Sign in to submit milestones, review work and follow progress.</p></div>
+            <div class="demo"><b>Demo accounts</b> (password <code>password123</code>)<br>Student: <code>ENG25AD0154</code> (or <code>Eng25ad0154@dsu.edu.in</code>)<br>Faculty: create an account first (you need the faculty access code)</div>
+        </aside>
+        <main class="login-side">
+        <div class="login-form">
+            <h2>Sign in</h2><p class="sub">Choose your role and enter your details.</p>
+            <div class="role-selection">
+                <button class="role-btn active" data-role="student" type="button">Student</button>
+                <button class="role-btn" data-role="faculty" type="button">Faculty</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group"><label for="username">Registration number or username</label><input type="text" id="username" name="username" autocomplete="username" placeholder="ENG25AD0154" required></div>
+                <div class="form-group"><label for="password">Password</label><input type="password" id="password" name="password" autocomplete="current-password" required></div>
+                <button type="submit" class="btn btn-primary">Sign in</button>
+            </form>
+            <p class="login-links">New here? <a href="{{ url_for('signup_page') }}">Create an account</a></p>
+        </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

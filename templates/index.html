@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Project Tracker</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="landing">
+    <div class="topbar"><a class="logo" href="/"><img src="{{ url_for('static', filename='images/favicon.svg') }}" alt="">College Project Tracker</a><a href="{{ url_for('login_page') }}" class="btn btn-primary btn-small">Sign in</a></div>
+    <section class="hero">
+        <div>
+            <h1>Every milestone, reviewed and on the record.</h1>
+            <p class="lead">Students submit their work, faculty review it, and project progress updates the moment a milestone is approved.</p>
+            <a href="{{ url_for('login_page') }}" class="btn btn-primary">Sign in to your portal</a> <a href="{{ url_for('signup_page') }}" class="btn btn-secondary">Create account</a>
+        </div>
+        <div class="tracker-card" aria-label="Example project">
+            <h3>Smart Attendance System</h3><p class="by">Guided by Dr. Smith &middot; Due 15 Dec</p>
+            <div class="seg"><i class="done" style="flex:20"></i><i class="done" style="flex:30"></i><i class="wait" style="flex:30"></i><i style="flex:20"></i></div>
+            <ul class="ms">
+                <li>Problem statement <span class="tag">Approved &middot; 20%</span></li>
+                <li>Literature survey <span class="tag">Approved &middot; 30%</span></li>
+                <li>Working prototype <span class="tag wait">In review &middot; 30%</span></li>
+                <li>Final report <span class="tag todo">Assigned &middot; 20%</span></li>
+            </ul>
+        </div>
+    </section>
+    <section class="band"><div class="in"><h2>From idea to approved project</h2>
+        <ol class="steps">
+            <li><b>Propose</b>Students pick a faculty guide and add their team.</li>
+            <li><b>Get approved</b>Faculty accept the project or send back remarks.</li>
+            <li><b>Deliver milestones</b>Faculty set milestones; students upload their work.</li>
+            <li><b>Review</b>Approved work moves the progress bar forward.</li>
+        </ol></div></section>
+    <section class="roles">
+        <div class="role-card"><h3>For students</h3><ul><li>Create projects and add teammates</li><li>Submit files against each milestone</li><li>Read faculty feedback in one place</li><li>See every deadline on a calendar</li></ul></div>
+        <div class="role-card"><h3>For faculty</h3><ul><li>Review and approve project requests</li><li>Set milestones and deadlines</li><li>Approve or reject submitted work with remarks</li><li>Watch progress across all your projects</li></ul></div>
+    </section>
+    <p class="foot">College Project Tracker &middot; Flask, SQLite, HTML, CSS and JavaScript</p>
+</div>
+</body>
+</html>

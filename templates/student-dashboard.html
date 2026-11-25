@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - College Project Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>College Project Tracker</h2>
+                <p>Student Portal</p>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-page="my-projects">My Projects</a></li>
+                    <li><a href="#" class="nav-link" data-page="feedback">Feedback</a></li>
+                    <li><a href="#" class="nav-link" data-page="calendar">Calendar</a></li>
+                    <li><a href="#" class="nav-link" data-page="profile">Profile</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+                <div id="dashboard" class="page active">
+        <header class="page-header">
+            <h1 id="page-title">Student Dashboard</h1>
+        </header>
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Approved Projects</h3>
+                <p id="total-projects" class="stat-value">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Ongoing Projects</h3>
+                <p id="ongoing-projects" class="stat-value">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Completed Projects</h3>
+                <p id="completed-projects" class="stat-value">0</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <h3>Project Overview</h3>
+            <div class="chart">
+                <canvas id="studentProjectChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+            
+            <div id="my-projects" class="page">
+                <header class="page-header">
+                    <button id="addProjectBtn" class="btn btn-primary">Add New Project</button>
+                </header>
+                <div class="projects-container"></div>
+            </div>
+            
+            <div id="feedback" class="page">
+                <header class="page-header">
+                    </header>
+                <div class="feedback-container"></div>
+            </div>
+            
+            <div id="calendar" class="page">
+                <header class="page-header">
+                    </header>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prevMonth" class="btn btn-small">&lt;</button>
+                        <h3 id="currentMonth"></h3>
+                        <button id="nextMonth" class="btn btn-small">&gt;</button>
+                    </div>
+                    <div class="calendar-grid"></div>
+                    <div class="deadlines-list">
+                        <h3>Upcoming Deadlines</h3>
+                        <ul></ul>
+                    </div>
+                </div>
+            </div>
+        
+            <div id="profile" class="page">
+                <header class="page-header">
+                    </header>
+                <div class="profile-container">
+                    <div class="profile-info">
+                        <div class="profile-picture">
+                            <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Profile Picture">
+                        </div>
+                        <div class="profile-details">
+                            <h3 id="profile-name"></h3>
+                            <p id="profile-reg-no"></p>
+                            <p id="profile-department"></p>
+                            <p id="profile-email"></p>
+                        </div>
+                    </div>
+                     <div class="profile-projects">
+                        <h3>My Projects</h3>
+                        <ul id="profile-project-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div> </div>
+    
+    <div id="addProjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Project</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addProjectForm">
+                    <div class="form-group">
+                        <label for="projectTitle">Project Title</label>
+                        <input type="text" id="projectTitle" name="projectTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Description</label>
+                        <textarea id="projectDescription" name="projectDescription" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDepartment">Department</label>
+                        <select id="projectDepartment" name="projectDepartment" required>
+                            <option value="">Select Department</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectFaculty">Faculty</label>
+                        <input type="text" id="projectFaculty" name="projectFaculty" required autocomplete="off" placeholder="Faculty email or name, e.g. meera.nair@dsu.edu.in">
+                        <small style="color:#64748b">Your guide must already have a faculty account. Using their email is the most reliable.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="teamMembers">Team Members (by Registration No)</label>
+                        <input type="text" id="teamMembers" name="teamMembers" placeholder="e.g. ENG25AD0154, ENG25AD0155">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Project</button>
+                        <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="viewDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="details-title">Project Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p><strong>Department:</strong> <span id="details-department"></span></p>
+                <p><strong>Faculty:</strong> <span id="details-faculty"></span></p>
+                <p><strong>Status:</strong> <span id="details-status"></span></p>
+                <p><strong>Description:</strong></p>
+                <p id="details-description"></p>
+                <hr>
+                <h4>Tasks</h4>
+                <div id="details-task-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="submitWorkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Submit Work for Milestone</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="submitWorkForm" enctype="multipart/form-data">
+                    <input type="hidden" id="submissionTaskId">
+                    <h4 id="submissionTaskTitle"></h4>
+                    <div class="form-group">
+                        <label for="submissionProgress">Progress Description</label>
+                        <textarea id="submissionProgress" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="submissionFile">Upload File (Optional)</label>
+                        <input type="file" id="submissionFile">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Submit Work</button>
+                        <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/departments.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/student.js') }}"></script>
+</body>
+</html>

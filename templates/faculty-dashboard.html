@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - College Project Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>College Project Tracker</h2>
+                <p>Faculty Portal</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-page="project-requests">Project Requests</a></li>
+                    <li><a href="#" class="nav-link" data-page="my-projects">My Projects</a></li>
+                    <li><a href="#" class="nav-link" data-page="profile">Profile</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div id="dashboard" class="page active">
+                <header class="page-header">
+                    <h1 id="page-title">Faculty Dashboard</h1>
+                    <div class="user-info"></div>
+                </header>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h3>Total Supervised Projects</h3>
+                        <p id="faculty-total-projects" class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Ongoing Projects</h3>
+                        <p id="faculty-ongoing-projects" class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Completed Projects</h3>
+                        <p id="faculty-completed-projects" class="stat-value">0</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Project Overview</h3>
+                    <div class="chart">
+                        <canvas id="facultyProjectChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="project-requests" class="page">
+                <header class="page-header">
+                    </header>
+                <div class="requests-container"></div>
+            </div>
+            
+            <div id="my-projects" class="page">
+                <header class="page-header">
+                    </header>
+                <div class="projects-container"></div>
+            </div>
+
+            <div id="profile" class="page">
+                <header class="page-header">
+                    </header>
+                <div class="profile-container">
+                    <div class="profile-info">
+                        <div class="profile-picture">
+                           <img src="{{ url_for('static', filename='images/faculty-avatar.png') }}" alt="Profile Picture">
+                        </div>
+                        <div class="profile-details">
+                            <h3></h3><p></p><p></p><p></p><p></p>
+                        </div>
+                    </div>
+                    <div class="profile-projects">
+                        <h3>Supervising Projects</h3>
+                        <ul></ul>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+
+    <div id="remarksModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Remarks</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="remarksForm">
+                    <input type="hidden" id="remarksProjectId">
+                    <div class="form-group">
+                        <label for="remarksText">Remarks</label>
+                        <textarea id="remarksText" name="remarksText" rows="6" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Submit Remarks</button>
+                        <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="deadlineModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Set Submission Deadline</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="deadlineForm">
+                    <input type="hidden" id="deadlineProjectId">
+                    <div class="form-group">
+                        <label for="submissionDate">Submission Date</label>
+                        <input type="date" id="submissionDate" name="submissionDate" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Set Deadline</button>
+                        <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="addMilestoneModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Milestone</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addMilestoneForm">
+                    <input type="hidden" id="milestoneProjectId">
+                    <div class="form-group">
+                        <label for="milestoneTitle">Milestone Title</label>
+                        <input type="text" id="milestoneTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="milestoneDescription">Description</label>
+                        <textarea id="milestoneDescription" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="milestonePercentage">Progress Percentage Value</label>
+                        <input type="number" id="milestonePercentage" min="1" max="100" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Milestone</button>
+                        <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskRemarksModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Rejection Remarks</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="taskRemarksForm">
+                    <input type="hidden" id="remarksTaskId">
+                    <div class="form-group">
+                        <label for="taskRemarksText">Please provide comments for the student explaining why the submission was rejected.</label>
+                        <textarea id="taskRemarksText" name="taskRemarksText" rows="6" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Submit Remarks & Reject</button>
+                        <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<div id="facultyViewDetailsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="details-title-faculty">Project Details</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p><strong>Department:</strong> <span id="details-department-faculty"></span></p>
+            <p><strong>Status:</strong> <span id="details-status-faculty"></span></p>
+            <p><strong>Current Deadline:</strong> <span id="details-deadline-faculty">N/A</span></p> 
+            <p><strong>Description:</strong></p>
+            <p id="details-description-faculty"></p>
+            <hr>
+            <h4>Team Members</h4>
+            <ul id="details-members-list-faculty"></ul>
+            <hr>
+            <h4>All Milestones</h4>
+            <div id="details-task-list-faculty"></div>
+            <div class="form-actions" style="justify-content: flex-start; margin-top: 30px;">
+                <button class="btn btn-primary change-deadline-btn" data-project-id="">Change Deadline</button> 
+            </div>
+            </div>
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/faculty.js') }}"></script>
+</body>
+</html>
